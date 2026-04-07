@@ -331,6 +331,89 @@ button {
   font-size: 0.9rem;
 }
 
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stat-block {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.readiness-note {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  line-height: 1.45;
+}
+
+.exam-stats {
+  display: grid;
+  gap: 10px;
+}
+
+.exam-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.exam-stat-main {
+  min-width: 0;
+}
+
+.exam-stat-title {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.exam-stat-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.exam-stat-badge {
+  flex: 0 0 auto;
+  min-width: 78px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.exam-stat-badge.ready {
+  background: var(--success-bg);
+  color: #225c32;
+}
+
+.exam-stat-badge.not-ready {
+  background: var(--error-bg);
+  color: #9f2d2d;
+}
+
 @media (max-width: 640px) {
   .app-shell {
     padding: max(12px, env(safe-area-inset-top)) 12px calc(20px + env(safe-area-inset-bottom));
@@ -376,5 +459,14 @@ button {
   .question-actions .secondary-button {
     width: 100%;
     min-width: 0;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .exam-stat-row {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

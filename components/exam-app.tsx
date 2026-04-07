@@ -423,6 +423,30 @@ export function ExamApp() {
   const explanation = parseExplanation(currentQuestion.explanation);
   const answeredCount = Object.values(progress).filter((entry) => entry.lastResult !== null).length;
   const wrongCount = Object.values(progress).filter((entry) => entry.lastResult === "wrong").length;
+  const totalAttempts = Object.values(progress).reduce((sum, entry) => sum + entry.correctCount + entry.wrongCount, 0);
+  const totalCorrect = Object.values(progress).reduce((sum, entry) => sum + entry.correctCount, 0);
+  const overallAccuracy = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+  const readinessThreshold = 70;
+  const perExamStats = examOptions.map((examNumber) => {
+    const examQuestions = questions.filter((question) => question.examNumber === examNumber);
+    const examEntries = examQuestions
+      .map((question) => progress[question.id])
+      .filter((entry): entry is ProgressEntry => Boolean(entry));
+    const attempts = examEntries.reduce((sum, entry) => sum + entry.correctCount + entry.wrongCount, 0);
+    const correct = examEntries.reduce((sum, entry) => sum + entry.correctCount, 0);
+    const answered = examEntries.filter((entry) => entry.lastResult !== null).length;
+    const review = examEntries.filter((entry) => entry.reviewLater).length;
+    const accuracy = attempts ? Math.round((correct / attempts) * 100) : 0;
+
+    return {
+      examNumber,
+      attempts,
+      answered,
+      review,
+      accuracy,
+      ready: attempts > 0 && accuracy >= readinessThreshold
+    };
+  });
 
   return (
     <main className="app-shell">
@@ -579,9 +603,45 @@ export function ExamApp() {
       <details className="panel">
         <summary>Progress</summary>
         <div className="panel-body compact">
-          <div>Answered: {answeredCount}</div>
-          <div>Wrong: {wrongCount}</div>
-          <div>Review: {Object.values(progress).filter((entry) => entry.reviewLater).length}</div>
+          <div className="stats-grid">
+            <div className="stat-block">
+              <div className="stat-label">Overall accuracy</div>
+              <div className="stat-value">{overallAccuracy}%</div>
+            </div>
+            <div className="stat-block">
+              <div className="stat-label">Attempts</div>
+              <div className="stat-value">{totalAttempts}</div>
+            </div>
+            <div className="stat-block">
+              <div className="stat-label">Answered</div>
+              <div className="stat-value">{answeredCount}</div>
+            </div>
+            <div className="stat-block">
+              <div className="stat-label">Review queue</div>
+              <div className="stat-value">{Object.values(progress).filter((entry) => entry.reviewLater).length}</div>
+            </div>
+          </div>
+
+          <div className="readiness-note">
+            Readiness threshold: {readinessThreshold}% accuracy on attempted questions. Current result:{" "}
+            <strong>{overallAccuracy >= readinessThreshold ? "Pass" : "Not pass"}</strong>
+          </div>
+
+          <div className="exam-stats">
+            {perExamStats.map((exam) => (
+              <div key={exam.examNumber} className="exam-stat-row">
+                <div className="exam-stat-main">
+                  <div className="exam-stat-title">Exam {exam.examNumber}</div>
+                  <div className="exam-stat-meta">
+                    {exam.accuracy}% · {exam.answered} answered · {exam.attempts} attempts · {exam.review} review
+                  </div>
+                </div>
+                <div className={`exam-stat-badge ${exam.ready ? "ready" : "not-ready"}`}>
+                  {exam.ready ? "Pass" : "Not pass"}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </details>
     </main>
