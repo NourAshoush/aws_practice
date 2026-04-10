@@ -599,10 +599,13 @@ export function ExamApp() {
 
     const visibleScopeKey = getScopeKey(scope);
     const restoredIndex =
-      lastScopeKey === visibleScopeKey && lastQuestionId
+      scope.kind === "all" && lastScopeKey === visibleScopeKey && lastQuestionId
         ? scopedQuestions.findIndex((question) => question.id === lastQuestionId)
         : -1;
-    const firstUnseenIndex = scopedQuestions.findIndex((question) => getQuestionStatus(progress[question.id]) === "unseen");
+    const firstUnseenIndex =
+      scope.kind === "all"
+        ? scopedQuestions.findIndex((question) => getQuestionStatus(progress[question.id]) === "unseen")
+        : -1;
     const nextIndex = restoredIndex >= 0 ? restoredIndex : firstUnseenIndex >= 0 ? firstUnseenIndex : 0;
 
     setCursor(nextIndex);
@@ -745,6 +748,8 @@ export function ExamApp() {
     setQueueFilter("all");
     setSearch("");
     setOpenPanel(null);
+    setLastQuestionId(nextScope.kind === "all" ? lastQuestionId : null);
+    setLastScopeKey(nextScope.kind === "all" ? lastScopeKey : getScopeKey(nextScope));
     setScopeSeed((value) => value + 1);
   }
 
@@ -903,6 +908,110 @@ export function ExamApp() {
             <div className="meta">Choose one exam or open the full bank.</div>
           </div>
         </header>
+
+        <div className="panel-switcher">
+          <button
+            className={`switcher-button ${openPanel === "options" ? "active" : ""}`.trim()}
+            type="button"
+            onClick={() => setOpenPanel((current) => (current === "options" ? null : "options"))}
+          >
+            <Icon name="sliders" />
+            <span>Options</span>
+          </button>
+          <button
+            className={`switcher-button ${openPanel === "progress" ? "active" : ""}`.trim()}
+            type="button"
+            onClick={() => setOpenPanel((current) => (current === "progress" ? null : "progress"))}
+          >
+            <Icon name="chart" />
+            <span>Progress</span>
+          </button>
+        </div>
+
+        {openPanel === "options" ? (
+          <section className="panel">
+            <div className="panel-body">
+              <div className="button-row">
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={() => downloadProgress({ progress, activity, lastQuestionId, lastScopeKey })}
+                >
+                  <Icon name="export" />
+                  <span>Export</span>
+                </button>
+                <button className="secondary-button" type="button" onClick={shareProgress}>
+                  <Icon name="share" />
+                  <span>Share</span>
+                </button>
+                <button className="secondary-button" type="button" onClick={copyProgress}>
+                  <Icon name="copy" />
+                  <span>Copy</span>
+                </button>
+                <button className="secondary-button" type="button" onClick={() => importInputRef.current?.click()}>
+                  <Icon name="import" />
+                  <span>Import</span>
+                </button>
+                <button className="secondary-button danger" type="button" onClick={resetProgress}>
+                  <Icon name="reset" />
+                  <span>Reset</span>
+                </button>
+                <input ref={importInputRef} hidden type="file" accept="application/json" onChange={importProgress} />
+              </div>
+
+              <label className="field">
+                <span>Paste imported progress</span>
+                <textarea
+                  rows={4}
+                  value={pasteValue}
+                  onChange={(event) => setPasteValue(event.target.value)}
+                  placeholder="Paste exported progress JSON"
+                />
+              </label>
+
+              <div className="button-row">
+                <button className="secondary-button" type="button" onClick={importProgressFromPaste}>
+                  <Icon name="import" />
+                  <span>Import pasted text</span>
+                </button>
+              </div>
+
+              {transferMessage ? <div className="small-note">{transferMessage}</div> : null}
+            </div>
+          </section>
+        ) : null}
+
+        {openPanel === "progress" ? (
+          <section className="panel">
+            <div className="panel-body">
+              <div className="stats-grid">
+                <div className="stat-block">
+                  <div className="stat-label">Accuracy</div>
+                  <div className="stat-value">{overallAccuracy}%</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-label">Answered</div>
+                  <div className="stat-value">{allQuestionsStats.answered}</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-label">Wrong</div>
+                  <div className="stat-value">{totalWrong}</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-label">Review</div>
+                  <div className="stat-value">{totalReview}</div>
+                </div>
+              </div>
+
+              <div className="readiness-note">
+                Ready at {readinessThreshold}% accuracy. Current result:{" "}
+                <strong>{overallAccuracy >= readinessThreshold ? "Pass" : "Not pass"}</strong>
+              </div>
+
+              <ProgressChart activity={activity} />
+            </div>
+          </section>
+        ) : null}
 
         <section className="overview-grid">
           <article className="exam-card exam-card-all">
