@@ -69,6 +69,70 @@ button {
   padding: 4px 2px;
 }
 
+.top-bar-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.overview-header {
+  margin-bottom: 18px;
+}
+
+.overview-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.exam-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.exam-card-all {
+  background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+}
+
+.exam-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.exam-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.exam-card-subtitle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 3px;
+}
+
+.exam-card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exam-card-stats span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .title {
   font-size: 1.15rem;
   font-weight: 700;
@@ -243,6 +307,7 @@ button {
 
 .option,
 .nav-button,
+.card-button,
 .primary-button,
 .secondary-button {
   border: 1px solid var(--border);
@@ -285,6 +350,7 @@ button {
 
 .option:hover,
 .nav-button:hover,
+.card-button:hover,
 .primary-button:hover,
 .secondary-button:hover {
   transform: translateY(-1px);
@@ -311,6 +377,7 @@ button {
 }
 
 .nav-button,
+.card-button,
 .primary-button,
 .secondary-button {
   display: inline-flex;
@@ -325,6 +392,18 @@ button {
 .nav-button {
   background: var(--surface-soft);
   flex: 1 1 0;
+}
+
+.back-button {
+  flex: 0 0 auto;
+}
+
+.card-button {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 10px 12px;
+  background: var(--surface-soft);
+  font-weight: 600;
 }
 
 .primary-button {
@@ -557,6 +636,12 @@ button {
     gap: 10px;
   }
 
+  .top-bar-main {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .nav-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -605,5 +690,14 @@ button {
   .exam-stat-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .exam-card-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .card-button {
+    width: 100%;
   }
 }
