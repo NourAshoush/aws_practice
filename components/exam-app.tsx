@@ -613,7 +613,7 @@ export function ExamApp() {
     setShowAnswer(false);
     setLastCheckCorrect(null);
     setRevealedQuestionId(null);
-  }, [scopeSeed, scopedQuestions, progress, lastQuestionId, lastScopeKey, scope, viewMode]);
+  }, [scopeSeed, scopedQuestions, scope, viewMode]);
 
   useEffect(() => {
     if (!activeQuestions.length) {
